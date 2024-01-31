@@ -33,17 +33,7 @@ Churn_rate_by_age <- aggregate (Exited ~ Age, data= Chn, FUN = function(x) 100* 
 
 print(Churn_rate_by_age)
 
-
-
-# Assuming churn_rate_by_age is your data frame with columns 'Age' and 'Churn'
-
-
-
-library(dplyr)
-library(ggplot2)
-
-# Assuming churn_data is your data frame with columns 'Age' and 'Churn'
-# Create age bins (adjust breaks and labels as needed)
+# Create age bins 
 Chn2 <- Chn %>%
   mutate(Age_Bin = cut(Age, breaks = c(0, 18, 25, 35, 50, 60,70,80, Inf), labels = c("<18", "18-25", "26-35", "36-50", "50-60","60-70","70-80","80+")))
 
@@ -78,13 +68,13 @@ ggplot(Churn_rate_by_Tenure, aes(x = Tenure, y = Churn_Rate, fill = Tenure)) +
 Churn_rate_by_Country <- Chn %>% group_by(Geography) %>% summarize  (Churn_Rate = round(sum(Exited) / n() * 100,2),Customer_count=n())
 #plot
 ggplot(Churn_rate_by_Country, aes(x = Geography)) +
-  geom_bar(aes(y = Churn_Rate), stat = "identity", fill = "blue", alpha = 0.7) +
-  geom_line(aes(y = Customer_count * 0.1), color = "red", linewidth = 1, group = 1) +
+  geom_bar(aes(y =Customer_count ), stat = "identity", fill = "blue", alpha = 0.7) +
+  geom_line(aes(y = Churn_Rate * 50), color = "red", linewidth = 1, group = 1) +
   scale_y_continuous(
-    sec.axis = sec_axis(~./0.1, name = "Customer Count")
+    sec.axis = sec_axis(~./50, name = "Churn Rate(%)")
   ) +
   labs(
-    y = "Churn Rate (%)",
+    y = "Customer count",
     x = "Geography",
     title = "Churn Rate and Customer Count by Geography"
   ) +
@@ -96,7 +86,6 @@ Churn_rate_by_Active_members <- Chn %>% group_by(IsActiveMember,Complain) %>% su
  Churn_rate_by_cardtype <- Chn %>% group_by(Card.Type,Tenure) %>% summarize  (Churn_Rate = round(sum(Exited) / n() * 100,2),Customer_count=n()) 
  df<- as.data.frame( Churn_rate_by_cardtype)
 
- 
  # Scatter plot
  ggplot(Churn_rate_by_cardtype , aes(x = Tenure, y = Churn_Rate, color = Card.Type, )) +
    geom_point(size = 4) +
